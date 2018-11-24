@@ -17,7 +17,7 @@ namespace ContentService.Repository
 
         public ContentItemRepository(IConfiguration configuration)
         {
-           var test = configuration.GetConnectionString("ContentService");
+           var testConnectionString = configuration.GetConnectionString("ContentService");
             _configuration = configuration;
         }
               
