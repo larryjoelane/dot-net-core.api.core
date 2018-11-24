@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ContentService.Models;
+using ContentService.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace dot_net_core.api.core
+
+namespace ContentService
 {
     public class Startup
     {
@@ -25,7 +27,14 @@ namespace dot_net_core.api.core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddDbContext<ContentContext>(opt =>
+             opt.UseNpgsql(Configuration.GetConnectionString("ContentDatabase")));
+            // for SQLServer
+            // opt.UseSqlServer(Configuration.GetConnectionString("ContentDatabase")));
+            services.AddMvc();
+
+            services.AddSingleton<IContentItemRepository, ContentItemRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,12 +44,7 @@ namespace dot_net_core.api.core
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
